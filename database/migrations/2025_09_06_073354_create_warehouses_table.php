@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('warehouses', function (Blueprint $table) {
-            $table->id(); // PRIMARY KEY 'id'
+            $table->id();
             $table->string('name', 100);
             $table->enum('type', ['RawMaterial', 'FinishedGoods', 'ColdStorage']);
             $table->string('location', 100)->nullable();

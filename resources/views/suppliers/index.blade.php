@@ -11,9 +11,8 @@
 </head>
 <body>
     <h1>Daftar Supplier</h1>
-    <a href="{{ route('admin.dashboard') }}" class="btn btn-primary">Dashboard</a>
+    <a href="{{ route('dashboard.admin') }}" class="btn btn-primary">Dashboard</a>
     
-
     <a href="{{ route('suppliers.create') }}">Tambah Supplier Baru</a>
 
     @if(session('success'))

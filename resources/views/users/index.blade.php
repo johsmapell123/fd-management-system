@@ -14,16 +14,16 @@
 
     <table border="1" cellpadding="5">
         <tr>
-            <th>ID</th>
+            <th>NO</th>
             <th>Nama</th>
             <th>Email</th>
             <th>Role</th>
             <th>Departemen</th>
             <th>Aksi</th>
         </tr>
-        @foreach($users as $user)
+        @foreach($users as $index => $user)
         <tr>
-            <td>{{ $user->id }}</td>
+            <td>{{ $index + 1 }}</td>
             <td>{{ $user->name }}</td>
             <td>{{ $user->email }}</td>
             <td>{{ $user->position }}</td>

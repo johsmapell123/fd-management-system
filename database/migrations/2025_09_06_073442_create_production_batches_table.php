@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('production_batches', function (Blueprint $table) {
-            $table->id(); // PRIMARY KEY 'id'
+            $table->id();
             $table->string('production_code', 50)->unique(); // contoh: RSN-250814-A
             $table->date('production_date');
             $table->string('shift', 10); // A, B, C

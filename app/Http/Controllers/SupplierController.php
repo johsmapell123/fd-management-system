@@ -45,6 +45,4 @@ class SupplierController extends Controller
 
         return redirect()->route('suppliers.index')->with('success', 'Status supplier berhasil diubah.');
     }
-
-    
 }

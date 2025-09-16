@@ -4,7 +4,7 @@
     <title>Manager Dashboard</title>
 </head>
 <body>
-    <h1>Selamat datang, {{ auth()->user()->name }} (Manager)</h1>
+    <h1>Selamat datang, {{ Auth::user()->name }} ({{ Auth::user()->position }})</h1>
 
     <ul>
         <li><a href="#">Review Produksi</a></li>

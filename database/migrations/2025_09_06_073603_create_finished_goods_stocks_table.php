@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('finished_goods_stocks', function (Blueprint $table) {
-            $table->id(); // PRIMARY KEY 'id'
+            $table->id();
             $table->foreignId('production_id')->constrained('production_batches')->onDelete('cascade');
             $table->foreignId('warehouse_id')->constrained('warehouses')->onDelete('cascade');
             $table->integer('available_carton');

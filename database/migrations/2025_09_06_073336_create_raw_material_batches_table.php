@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('raw_material_batches', function (Blueprint $table) {
-            $table->id(); // PRIMARY KEY 'id'
+            $table->id();
             $table->string('batch_code', 50)->unique();   // contoh: PM-250813-01
             $table->foreignId('supplier_id')->constrained('suppliers')->onDelete('cascade');
             $table->enum('material_type', ['Flour', 'Salt', 'Kansui']);
