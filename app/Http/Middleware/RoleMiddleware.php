@@ -22,7 +22,7 @@ class RoleMiddleware
         $userPosition = Auth::user()->position;
 
         if (!in_array($userPosition, $positions, true)) {
-            abort(403, 'Unauthorized');
+            abort(403, 'Access denied. ' . $positions[0] . ' only.');
         }
 
         Log::info('Checking role middleware', ['expected' => $positions, 'actual' => Auth::user()->position]);

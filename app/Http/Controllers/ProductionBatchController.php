@@ -2,70 +2,93 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 use App\Models\ProductionBatch;
 use App\Models\RawMaterialBatch;
-use App\Models\ProductionMaterial;
-use Carbon\Carbon;
+use App\Models\RawMaterialStock;
 
 
 class ProductionBatchController extends Controller
 {
     public function index()
     {
-        $batches = ProductionBatch::with('materials.rawMaterial')->get();
-        return view('production_batches.index', compact('batches'));
+        $batches = ProductionBatch::with('productionMaterials', 'finishedGoodsStock', 'qualityControlResults')->get();
+        return view('production-batches.index', compact('batches'));
     }
 
     public function create()
     {
         // Ambil hanya bahan baku yg statusnya "In Use"
-        $rawMaterials = RawMaterialBatch::where('status', 'OK')->get();
-        return view('production_batches.create', compact('materials'));
+        $rawBatches = RawMaterialBatch::where('status', 'In Use')->get();
+        return view('production-batches.create', compact('rawBatches'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'batch_code' => 'required|unique:production_batches',
-            'produced_date' => 'required|date',
-            'raw_batch_id' => 'required|array',
-            'raw_batch_id.*' => 'exists:raw_material_batches,id',
-            'quantity_used.*' => 'required|numeric|min:0.01',
+        $validated = $request->validate([
+            'production_date' => 'nullable|date',
+            'shift' => 'nullable|in:A,B,C',
+            'quantity_carton' => 'nullable|integer',
+            'notes' => 'nullable|string',
         ]);
-
-        // Simpan batch produksi
-        $production = ProductionBatch::create([
-            'batch_code' => $request->batch_code,
-            'produced_date' => $request->produced_date,
-            'status' => 'In Production',
-        ]);
-
-        // Loop bahan baku
-        foreach ($request->raw_batch_id as $key => $raw_batch_id) {
-            $quantityUsed = $request->quantity_used[$key];
-
-            // Simpan ke tabel production_materials
-            ProductionMaterial::create([
-                'production_id' => $production->id,
-                'raw_batch_id' => $raw_batch_id,
-                'material_type' => RawMaterialBatch::find($raw_batch_id)->material_type,
-                'quantity_used' => $quantityUsed,
-            ]);
-
-            // Kurangi stok bahan baku
-            $rawBatch = RawMaterialBatch::find($raw_batch_id);
-            $rawBatch->quantity -= $quantityUsed;
-
-            // Kalau stok habis, status ubah jadi 'In Use' atau 'Finished'
-            if ($rawBatch->quantity <= 0) {
-                $rawBatch->status = 'In Use';
+        // Generate production code otomatis
+        $validated['production_code'] = 'RSN-' . date('Ymd') . '-' . Str::random(1);
+        $batch = ProductionBatch::create($validated);
+        // Tambah bahan (contoh sederhana, bisa dari form array)
+        if ($request->has('materials')) {
+            foreach ($request->materials as $material) {
+                $batch->productionMaterials()->create([
+                    'raw_batch_id' => $material['raw_batch_id'],
+                    'material_type' => $material['material_type'],
+                    'quantity_used' => $material['quantity_used'],
+                ]);
+                // Update stok otomatis
+                $rawStock = RawMaterialStock::where('raw_batch_id', $material['raw_batch_id'])->first();
+                if ($rawStock) {
+                    $rawStock->available_quantity -= $material['quantity_used'];
+                    $rawStock->save();
+                }
             }
-
-            $rawBatch->save();
         }
+        return redirect()->route('production-batches.index')->with('success', 'Production batch created.');
+    }
 
-        return redirect()->route('production_batches.index')
-            ->with('success', 'Batch produksi berhasil ditambahkan');
+    public function show(ProductionBatch $productionBatch)
+    {
+        $productionBatch->load('productionMaterials', 'finishedGoodsStock', 'qualityControlResults');
+        return view('production-batches.show', compact('productionBatch'));
+    }
+
+    public function edit(ProductionBatch $productionBatch)
+    {
+        if (Auth::user()->position !== 'Manager' && Auth::user()->position !== 'Admin') {
+            return redirect()->back()->with('error', 'Access denied.');
+        }
+        return view('production-batches.edit', compact('productionBatch'));
+    }
+
+    public function update(Request $request, ProductionBatch $productionBatch)
+    {
+        if (Auth::user()->position !== 'Manager' && Auth::user()->position !== 'Admin') {
+            return redirect()->back()->with('error', 'Access denied.');
+        }
+        $validated = $request->validate([
+            'status' => 'required|in:In Production,In Warehouse', // Validasi selesai
+            'notes' => 'nullable|string',
+        ]);
+        $productionBatch->update($validated);
+        return redirect()->route('production-batches.index')->with('success', 'Production batch updated.');
+    }
+
+    public function destroy(ProductionBatch $productionBatch)
+    {
+        if (Auth::user()->position !== 'Admin') {
+            return redirect()->back()->with('error', 'Access denied.');
+        }
+        $productionBatch->delete();
+        return redirect()->route('production-batches.index')->with('success', 'Production batch deleted.');
     }
 }

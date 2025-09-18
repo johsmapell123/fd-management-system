@@ -12,7 +12,8 @@ class FinishedGoodsStock extends Model
         'available_carton'
     ];
 
-    public function production()
+    // Relasi: Many-to-One dengan ProductionBatches dan Warehouses
+    public function productionBatch()
     {
         return $this->belongsTo(ProductionBatch::class, 'production_id');
     }

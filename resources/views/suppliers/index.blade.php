@@ -1,55 +1,40 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Daftar Supplier</title>
-    <style>
-        .inactive {
-            color: red;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
-    <h1>Daftar Supplier</h1>
-    <a href="{{ route('dashboard.admin') }}" class="btn btn-primary">Dashboard</a>
-    
-    <a href="{{ route('suppliers.create') }}">Tambah Supplier Baru</a>
+@extends('layouts.app')
 
-    @if(session('success'))
-        <p style="color: green;">{{ session('success') }}</p>
-    @endif
+@section('title', 'Daftar Supplier')
 
-    <table border="1" cellpadding="5">
+@section('content')
+<h1>Daftar Supplier</h1>
+<a href="{{ route('suppliers.create') }}" class="btn btn-primary mb-3">Tambah Supplier</a>
+<table class="table table-bordered">
+    <thead>
         <tr>
-            <th>ID</th>
             <th>Nama</th>
             <th>Kontak</th>
             <th>Telepon</th>
             <th>Email</th>
             <th>Alamat</th>
-            <th>Status</th>
             <th>Aksi</th>
         </tr>
+    </thead>
+    <tbody>
         @foreach($suppliers as $supplier)
-        <tr class="{{ $supplier->status === 'Inactive' ? 'inactive' : '' }}">
-            <td>{{ $supplier->id }}</td>
+        <tr>
             <td>{{ $supplier->name }}</td>
             <td>{{ $supplier->contact_person }}</td>
             <td>{{ $supplier->phone }}</td>
             <td>{{ $supplier->email }}</td>
             <td>{{ $supplier->address }}</td>
-            <td>{{ $supplier->status }}</td>
             <td>
-                <form method="POST" action="{{ route('suppliers.toggleStatus', $supplier->id) }}">
-                    @csrf
-                    <button type="submit">
-                        {{ $supplier->status === 'Active' ? 'Nonaktifkan' : 'Aktifkan' }}
-                    </button>
+                <a href="{{ route('suppliers.show', $supplier) }}" class="btn btn-info btn-sm">Detail</a>
+                <a href="{{ route('suppliers.edit', $supplier) }}" class="btn btn-warning btn-sm">Edit</a>
+                <form action="{{ route('suppliers.destroy', $supplier) }}" method="POST" style="display:inline;">
+                    @csrf @method('DELETE')
+                    <button type="submit" class="btn btn-danger btn-sm"
+                        onclick="return confirm('Yakin hapus?')">Hapus</button>
                 </form>
             </td>
         </tr>
         @endforeach
-    </table>
-
-</body>
-</html>
+    </tbody>
+</table>
+@endsection

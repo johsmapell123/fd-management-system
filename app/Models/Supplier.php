@@ -17,7 +17,13 @@ class Supplier extends Model
         'status'
     ];
 
-    public function batches()
+    // Relasi: One-to-Many dengan Contracts dan RawMaterialBatches
+    public function contracts()
+    {
+        return $this->hasMany(Contract::class, 'supplier_id');
+    }
+
+    public function rawMaterialBatches()
     {
         return $this->hasMany(RawMaterialBatch::class, 'supplier_id');
     }

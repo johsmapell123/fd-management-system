@@ -10,17 +10,17 @@ class ProductionMaterial extends Model
     protected $fillable = [
         'production_id',
         'raw_batch_id',
-        
         'quantity_used'
     ];
 
-    public function production()
+    // Relasi: Many-to-One dengan ProductionBatches dan RawMaterialBatches
+    public function productionBatch()
     {
-        return $this->belongsTo(ProductionBatch::class, 'production_id', 'id');
+        return $this->belongsTo(ProductionBatch::class, 'production_id');
     }
 
-    public function rawMaterial()
+    public function rawMaterialBatch()
     {
-        return $this->belongsTo(RawMaterialBatch::class, 'raw_batch_id', 'id');
+        return $this->belongsTo(RawMaterialBatch::class, 'raw_batch_id');
     }
 }

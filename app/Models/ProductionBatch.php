@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class ProductionBatch extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'production_code',
         'production_date',
@@ -16,15 +17,19 @@ class ProductionBatch extends Model
         'status'
     ];
 
-    // Produksi pakai banyak bahan baku
-    public function materials()
+    // Relasi: One-to-Many dengan ProductionMaterials, FinishedGoodsStock, QualityControlResults
+    public function productionMaterials()
     {
         return $this->hasMany(ProductionMaterial::class, 'production_id');
     }
 
-    // Produksi menghasilkan stok barang jadi
-    public function finishedStock()
+    public function finishedGoodsStock()
     {
-        return $this->hasOne(FinishedGoodsStock::class, 'production_id');
+        return $this->hasMany(FinishedGoodsStock::class, 'production_id');
+    }
+
+    public function qualityControlResults()
+    {
+        return $this->hasMany(QualityControlResult::class, 'production_id');
     }
 }

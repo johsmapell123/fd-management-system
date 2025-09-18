@@ -12,13 +12,13 @@ class Warehouse extends Model
         'location'
     ];
 
-    public function rawStocks()
+    // Relasi: One-to-Many dengan RawMaterialStock dan FinishedGoodsStock
+    public function rawMaterialStock()
     {
         return $this->hasMany(RawMaterialStock::class, 'warehouse_id');
     }
 
-    // Warehouse bisa punya stok barang jadi
-    public function finishedStocks()
+    public function finishedGoodsStock()
     {
         return $this->hasMany(FinishedGoodsStock::class, 'warehouse_id');
     }

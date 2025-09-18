@@ -18,19 +18,17 @@ class RawMaterialBatch extends Model
         'status'
     ];
 
-    // Batch ini dimiliki oleh satu supplier
+    // Relasi: Many-to-One dengan Suppliers, One-to-Many dengan RawMaterialStock dan ProductionMaterials
     public function supplier()
     {
         return $this->belongsTo(Supplier::class, 'supplier_id');
     }
 
-    // Batch bisa masuk ke stok raw material
-    public function stock()
+    public function rawMaterialStock()
     {
-        return $this->hasOne(RawMaterialStock::class, 'raw_batch_id');
+        return $this->hasMany(RawMaterialStock::class, 'raw_batch_id');
     }
 
-    // Batch bisa dipakai dalam banyak produksi
     public function productionMaterials()
     {
         return $this->hasMany(ProductionMaterial::class, 'raw_batch_id');

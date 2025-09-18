@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('production_batches', function (Blueprint $table) {
             $table->id();
-            $table->string('production_code', 50)->unique(); // contoh: RSN-250814-A
-            $table->date('production_date');
-            $table->string('shift', 10); // A, B, C
-            $table->integer('quantity_carton');
+            $table->string('production_code', 50)->unique();
+            $table->date('production_date')->nullable();
+            $table->enum('shift', ['A', 'B', 'C'])->nullable();
+            $table->integer('quantity_carton')->nullable();
             $table->enum('status', ['In Production', 'In Warehouse'])->default('In Production');
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

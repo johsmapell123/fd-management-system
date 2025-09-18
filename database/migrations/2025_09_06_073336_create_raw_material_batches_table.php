@@ -19,7 +19,8 @@ return new class extends Migration
             $table->date('received_date');
             $table->decimal('quantity', 10, 2);
             $table->string('unit', 20); // kg, liter
-            $table->enum('status', ['OK', 'Rejected', 'In Use'])->default('OK');
+            $table->enum('status', ['OK', 'Rejected', 'In Use'])->default('In Use');
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }

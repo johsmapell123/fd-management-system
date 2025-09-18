@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('production_id')->constrained('production_batches')->onDelete('cascade');
             $table->foreignId('warehouse_id')->constrained('warehouses')->onDelete('cascade');
-            $table->integer('available_carton');
+            $table->integer('available_carton')->nullable();
+            $table->date('entry_date')->nullable(); // Untuk FIFO
             $table->timestamps();
         });
     }

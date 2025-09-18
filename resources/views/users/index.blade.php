@@ -1,44 +1,37 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Kelola Users</title>
-</head>
-<body>
-    <h1>Daftar Users</h1>
+@extends('layouts.app')
 
-    <a href="{{ route('users.create') }}">Tambah User Baru</a>
+@section('title', 'Daftar User')
 
-    @if(session('success'))
-        <p style="color: green;">{{ session('success') }}</p>
-    @endif
-
-    <table border="1" cellpadding="5">
-        <tr>
-            <th>NO</th>
-            <th>Nama</th>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Departemen</th>
-            <th>Aksi</th>
-        </tr>
-        @foreach($users as $index => $user)
-        <tr>
-            <td>{{ $index + 1 }}</td>
-            <td>{{ $user->name }}</td>
-            <td>{{ $user->email }}</td>
-            <td>{{ $user->position }}</td>
-            <td>{{ $user->department }}</td>
-            <td>
-                <a href="{{ route('users.edit', $user->id) }}">Edit</a> |
-                <form method="POST" action="{{ route('users.destroy', $user->id) }}" onsubmit="return confirm('Yakin mau hapus user ini?')">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit">Hapus</button>
-                </form>
-            </td>
-        </tr>
-        @endforeach
+@section('content')
+    <h1>Daftar User</h1>
+    <a href="{{ route('users.create') }}" class="btn btn-primary mb-3">Tambah User</a>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Nama</th>
+                <th>Email</th>
+                <th>Departemen</th>
+                <th>Posisi</th>
+                <th>Aksi</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($users as $user)
+                <tr>
+                    <td>{{ $user->name }}</td>
+                    <td>{{ $user->email }}</td>
+                    <td>{{ $user->department }}</td>
+                    <td>{{ $user->position }}</td>
+                    <td>
+                        <a href="{{ route('users.show', $user) }}" class="btn btn-info btn-sm">Detail</a>
+                        <a href="{{ route('users.edit', $user) }}" class="btn btn-warning btn-sm">Edit</a>
+                        <form action="{{ route('users.destroy', $user) }}" method="POST" style="display:inline;">
+                            @csrf @method('DELETE')
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Yakin hapus?')">Hapus</button>
+                        </form>
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
     </table>
-
-</body>
-</html>
+@endsection

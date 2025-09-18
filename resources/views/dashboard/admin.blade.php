@@ -8,7 +8,7 @@
 
     <ul>
         <li><a href="{{ route('users.index') }}">Kelola Users</a></li>
-        <li><a href="{{ route('suppliers.index') }}">Kelola Suppliers bisaaaa</a></li>
+        <li><a href="{{ route('suppliers.index') }}">Kelola Suppliers</a></li>
         <li><a href="#">Laporan Produksi</a>
         <span>(undermaintained)</span></li>
         <li><a href="#">Laporan Gudang</a>

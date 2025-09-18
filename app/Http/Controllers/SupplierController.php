@@ -2,39 +2,80 @@
 
 
 namespace App\Http\Controllers;
-use Illuminate\Http\Request;
+
 use App\Models\Supplier;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class SupplierController extends Controller
 {
     // List semua supplier
     public function index()
     {
-        // urutan berdasarkan status, aktif di atas inaktif
-        $suppliers = Supplier::orderByRaw("status = 'Inactive'")->get();
+        $suppliers = Supplier::with('contracts')->get();
         return view('suppliers.index', compact('suppliers'));
     }
 
     // Form tambah supplier
     public function create()
     {
-        return view('suppliers.create');
+        if (Auth::user()->position === 'Staff' || Auth::user()->position === 'Manager' || Auth::user()->position === 'Admin') {
+            return view('suppliers.create');
+        }
+        return redirect()->back()->with('error', 'Access denied.');
     }
 
     // Simpan supplier baru
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:150',
             'contact_person' => 'nullable|string|max:100',
             'phone' => 'nullable|string|max:50',
             'email' => 'nullable|email|max:100',
             'address' => 'nullable|string',
         ]);
+        Supplier::create($validated);
+        return redirect()->route('suppliers.index')->with('success', 'Supplier created.');
+    }
 
-        Supplier::create($request->all());
+    public function show(Supplier $supplier)
+    {
+        $supplier->load('contracts', 'rawMaterialBatches');
+        return view('suppliers.show', compact('supplier'));
+    }
 
-        return redirect()->route('suppliers.index')->with('success', 'Supplier berhasil ditambahkan.');
+    public function edit(Supplier $supplier)
+    {
+        if (Auth::user()->position === 'Manager' || Auth::user()->position === 'Admin') {
+            return view('suppliers.edit', compact('supplier'));
+        }
+        return redirect()->back()->with('error', 'Access denied.');
+    }
+
+    public function update(Request $request, Supplier $supplier)
+    {
+        if (Auth::user()->position !== 'Manager' && Auth::user()->position !== 'Admin') {
+            return redirect()->back()->with('error', 'Access denied.');
+        }
+        $validated = $request->validate([
+            'name' => 'required|string|max:150',
+            'contact_person' => 'nullable|string|max:100',
+            'phone' => 'nullable|string|max:50',
+            'email' => 'nullable|email|max:100',
+            'address' => 'nullable|string',
+        ]);
+        $supplier->update($validated);
+        return redirect()->route('suppliers.index')->with('success', 'Supplier updated.');
+    }
+
+    public function destroy(Supplier $supplier)
+    {
+        if (Auth::user()->position !== 'Admin') {
+            return redirect()->back()->with('error', 'Access denied.');
+        }
+        $supplier->delete();
+        return redirect()->route('suppliers.index')->with('success', 'Supplier deleted.');
     }
 
     public function toggleStatus($id)

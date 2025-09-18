@@ -13,7 +13,8 @@ class RawMaterialStock extends Model
         'unit'
     ];
 
-    public function batch()
+    // Relasi: Many-to-One dengan RawMaterialBatches dan Warehouses
+    public function rawMaterialBatch()
     {
         return $this->belongsTo(RawMaterialBatch::class, 'raw_batch_id');
     }

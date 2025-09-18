@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('production_materials', function (Blueprint $table) {
+        Schema::create('contracts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('production_id')->constrained('production_batches')->onDelete('cascade');
-            $table->foreignId('raw_batch_id')->constrained('raw_material_batches')->onDelete('cascade');
+            $table->foreignId('supplier_id')->constrained('suppliers')->onDelete('cascade');
             $table->enum('material_type', ['Flour', 'Salt', 'Kansui']);
-            $table->decimal('quantity_used', 10, 2)->nullable();
+            $table->decimal('price', 10, 2)->nullable();
+            $table->string('delivery_schedule', 100)->nullable();
+            $table->date('contract_duration')->nullable();
+            $table->enum('payment_status', ['Pending', 'Paid'])->default('Pending');
             $table->timestamps();
         });
     }
@@ -26,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('production_materials');
+        Schema::dropIfExists('contracts');
     }
 };

@@ -5,90 +5,85 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all(); // ambil semua user
+        if (Auth::user()->position !== 'Admin') {
+            return redirect()->back()->with('error', 'Access denied.');
+        }
+        $users = User::all();
         return view('users.index', compact('users'));
     }
 
     public function create()
     {
+        if (Auth::user()->position !== 'Admin') {
+            return redirect()->back()->with('error', 'Access denied.');
+        }
         return view('users.create');
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        if (Auth::user()->position !== 'Admin') {
+            return redirect()->back()->with('error', 'Access denied.');
+        }
+        $validated = $request->validate([
             'name' => 'required|string|max:100',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:6',
-            'position' => 'required|in:Admin,Manager,Staff',
-            'department' => 'nullable|string|max:50',
+            'password' => 'required|string|min:8',
+            'department' => 'required|in:Production,QC,Warehouse,Admin',
+            'position' => 'required|in:Staff,Manager,Admin',
         ]);
-
-        $user = new User();
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = Hash::make($request->password);
-        $user->position = $request->position;
-
-        if ($request->position === 'Staff') {
-            $user->department = $request->department;
-        } else {
-            $user->department = null;
-        }
-
-        $user->save();
-
-        return redirect()->route('users.index')->with('success', 'User berhasil ditambahkan.');
+        $validated['password'] = Hash::make($validated['password']);
+        User::create($validated);
+        return redirect()->route('users.index')->with('success', 'User created.');
     }
 
-    // Hapus user
-    // definisikan method destroy untuk menghapus user berdasarkan ID
-
-    public function destroy($id)
+    public function show(User $user)
     {
-        $user = User::findOrFail($id);
-        $user->delete(); // hapus user permanen
-        return redirect()->route('users.index')->with('success', 'User berhasil dihapus.');
+        if (Auth::user()->position !== 'Admin' && Auth::user()->user_id !== $user->user_id) {
+            return redirect()->back()->with('error', 'Access denied.');
+        }
+        return view('users.show', compact('user'));
     }
 
     public function edit($id)
     {
-        $user = User::findOrFail($id);
+        if (Auth::user()->position !== 'Admin') {
+            return redirect()->back()->with('error', 'Access denied.');
+        }
         return view('users.edit', compact('user'));
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, User $user)
     {
-        $user = User::findOrFail($id);
-
-        $request->validate([
+        if (Auth::user()->position !== 'Admin') {
+            return redirect()->back()->with('error', 'Access denied.');
+        }
+        $validated = $request->validate([
             'name' => 'required|string|max:100',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'position' => 'required|in:Admin,Manager,Staff',
+            'email' => 'required|email|unique:users,email,' . $user->user_id . ',user_id',
+            'department' => 'required|in:Production,QC,Warehouse,Admin',
+            'position' => 'required|in:Staff,Manager,Admin',
         ]);
-
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->position = $request->position;
-
         if ($request->filled('password')) {
-            $user->password = Hash::make($request->password);
+            $validated['password'] = Hash::make($request->password);
         }
+        $user->update($validated);
+        return redirect()->route('users.index')->with('success', 'User updated.');
+    }
 
-        if ($request->position === 'Staff') {
-            $user->department = $request->department;
-        } else {
-            $user->department = null;
+    public function destroy(User $user)
+    {
+        if (Auth::user()->position !== 'Admin') {
+            return redirect()->back()->with('error', 'Access denied.');
         }
-
-        $user->save();
-
-        return redirect()->route('users.index')->with('success', 'User berhasil diperbarui.');
+        $user->delete();
+        return redirect()->route('users.index')->with('success', 'User deleted.');
     }
 }

@@ -1,37 +1,31 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Tambah Supplier</title>
-</head>
-<body>
-    <a href="{{ route('suppliers.index') }}" class="btn btn-primary">Dashboard</a>
-    <h1>Tambah Supplier Baru</h1>
+@extends('layouts.app')
 
-    <form method="POST" action="{{ route('suppliers.store') }}">
-        @csrf
-        <label>Nama Supplier:</label><br>
-        <input type="text" name="name" required><br><br>
+@section('title', 'Tambah Supplier')
 
-        <label>Contact Person:</label><br>
-        <input type="text" name="contact_person"><br><br>
-
-        <label>Telepon:</label><br>
-        <input type="text" name="phone"><br><br>
-
-        <label>Email:</label><br>
-        <input type="email" name="email"><br><br>
-
-        <label>Alamat:</label><br>
-        <textarea name="address"></textarea><br><br>
-
-        <label>Status:</label><br>
-        <select name="status">
-            <option value="Active" selected>Active</option>
-            <option value="Inactive">Inactive</option>
-        </select><br><br>
-
-        <button type="submit">Simpan</button>
-    </form>
-
-</body>
-</html>
+@section('content')
+<h1>Tambah Supplier</h1>
+<form action="{{ route('suppliers.store') }}" method="POST">
+    @csrf
+    <div class="mb-3">
+        <label for="name" class="form-label">Nama</label>
+        <input type="text" class="form-control" id="name" name="name" required>
+    </div>
+    <div class="mb-3">
+        <label for="contact_person" class="form-label">Kontak Person</label>
+        <input type="text" class="form-control" id="contact_person" name="contact_person">
+    </div>
+    <div class="mb-3">
+        <label for="phone" class="form-label">Telepon</label>
+        <input type="text" class="form-control" id="phone" name="phone">
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input type="email" class="form-control" id="email" name="email">
+    </div>
+    <div class="mb-3">
+        <label for="address" class="form-label">Alamat</label>
+        <textarea class="form-control" id="address" name="address"></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Simpan</button>
+</form>
+@endsection
