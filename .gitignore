@@ -21,4 +21,5 @@
 /vendor
 Homestead.json
 Homestead.yaml
+podman-compose.yaml
 Thumbs.db
