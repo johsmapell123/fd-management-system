@@ -11,8 +11,14 @@ class RawMaterialStockController extends Controller
 {
   public function index()
   {
-    $stocks = RawMaterialStock::with('rawMaterialBatch', 'warehouse')->get();
-    return view('raw-material-stocks.index', compact('stocks'));
+    $stocks = RawMaterialStock::with('rawMaterialBatch', 'warehouse')->latest()->get();
+    return view('warehouse.raw_materials.raw_material_stocks.index', compact('stocks'));
+  }
+
+  public function show(RawMaterialStock $rawMaterialStock) 
+  {
+    $rawMaterialStock->load('rawMaterialBatch', 'warehouse')->get();
+    return view('warehouse.raw_materials.raw_material_stocks.show', compact('rawMaterialStock'));
   }
 
   // Lainnya bisa ditambahkan jika perlu manual input, tapi biasanya otomatis dari batch

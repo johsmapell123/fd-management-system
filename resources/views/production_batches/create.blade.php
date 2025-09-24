@@ -1,98 +1,44 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Input Batch Produksi</title>
-    <script>
-        let materialIndex = 0;
+@extends('layouts.app')
 
-        function addMaterialRow() {
-            materialIndex++;
-            const container = document.getElementById('materials-container');
+@section('title', 'Mulai Produksi')
 
-            const row = document.createElement('div');
-            row.classList.add('material-row');
-            row.innerHTML = `
-                <div>
-                    <label>Pilih Bahan:</label>
-                    <select name="materials[${materialIndex}][raw_batch_id]" required>
-                        <option value="">--Pilih Batch--</option>
-                        @foreach($materials as $m)
-                            <option value="{{ $m->id }}">
-                                {{ $m->batch_code }} - {{ $m->material_type }} ({{ $m->quantity }} {{ $m->unit }})
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label>Jumlah Dipakai:</label>
-                    <input type="number" name="materials[${materialIndex}][quantity_used]" step="0.01" required>
-                </div>
-                <hr>
-            `;
-            container.appendChild(row);
-        }
-    </script>
-</head>
-<body>
-    <h1>Input Batch Produksi</h1>
-
-    @if ($errors->any())
-        <div style="color: red;">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    <form method="POST" action="{{ route('production_batches.store') }}">
+@section('content')
+    <h1>Mulai Produksi</h1>
+    <form action="{{ route('production-batches.store') }}" method="POST">
         @csrf
-
-        <div>
-            <label>Kode Batch:</label>
-            <input type="text" name="batch_code" value="{{ old('batch_code') }}" required>
+        <div class="mb-3">
+            <label for="production_date" class="form-label">Tanggal Produksi</label>
+            <input type="date" class="form-control" id="production_date" name="production_date">
         </div>
-
-        <div>
-            <label>Tanggal Produksi:</label>
-            <input type="date" name="produced_date" value="{{ old('produced_date') }}" required>
-        </div>
-
-        <div>
-            <label>Status:</label>
-            <select name="status" required>
-                <option value="Pending" {{ old('status') === 'Pending' ? 'selected' : '' }}>Pending</option>
-                <option value="Completed" {{ old('status') === 'Completed' ? 'selected' : '' }}>Completed</option>
+        <div class="mb-3">
+            <label for="shift" class="form-label">Shift</label>
+            <select class="form-select" id="shift" name="shift">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
             </select>
         </div>
-
-        <h3>Bahan Baku yang Dipakai</h3>
-        <div id="materials-container">
-            <div class="material-row">
-                <div>
-                    <label>Pilih Bahan:</label>
-                    <select name="materials[0][raw_batch_id]" required>
-                        <option value="">--Pilih Batch--</option>
-                        @foreach($materials as $m)
-                            <option value="{{ $m->id }}">
-                                {{ $m->batch_code }} - {{ $m->material_type }} ({{ $m->quantity }} {{ $m->unit }})
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label>Jumlah Dipakai:</label>
-                    <input type="number" name="materials[0][quantity_used]" step="0.01" required>
-                </div>
-                <hr>
-            </div>
+        <div class="mb-3">
+            <label for="quantity_carton" class="form-label">Jumlah Karton</label>
+            <input type="number" class="form-control" id="quantity_carton" name="quantity_carton">
         </div>
-
-        <button type="button" onclick="addMaterialRow()">+ Tambah Bahan</button>
-        <br><br>
-
-        <button type="submit">Simpan</button>
+        <div class="mb-3">
+            <label for="notes" class="form-label">Catatan</label>
+            <textarea class="form-control" id="notes" name="notes"></textarea>
+        </div>
+        <!-- Tambah bahan (contoh sederhana, bisa pakai JS untuk add row dynamic jika perlu) -->
+        <h3>Tambah Bahan</h3>
+        <div class="mb-3">
+            <label for="materials[0][raw_batch_id]" class="form-label">Batch Bahan</label>
+            <select class="form-select" name="materials[0][raw_batch_id]">
+                @foreach($rawBatches as $rawBatch)
+                    <option value="{{ $rawBatch->batch_id }}">{{ $rawBatch->batch_code }} ({{ $rawBatch->material_type }})</option>
+                @endforeach
+            </select>
+            <input type="hidden" name="materials[0][material_type]" value="Flour"> <!-- Adaptasi -->
+            <label for="materials[0][quantity_used]" class="form-label">Jumlah Digunakan</label>
+            <input type="number" step="0.01" class="form-control" name="materials[0][quantity_used]">
+        </div>
+        <button type="submit" class="btn btn-primary">Simpan</button>
     </form>
-</body>
-</html>
+@endsection

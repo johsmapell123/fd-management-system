@@ -21,16 +21,23 @@
                             <li class="nav-item"><a class="nav-link" href="{{ route('production-batches.create') }}">Mulai Produksi</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ route('finished-goods-stocks.create') }}">Terima Produk Jadi</a></li>
                         @elseif(Auth::user()->position === 'Manager')
-                            <li class="nav-item"><a class="nav-link" href="/manager/dashboard">Dashboard Laporan</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{{ route('production-batches.index') }}">Validasi Produksi</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{{ route('quality-control-results.index') }}">Validasi QC</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('manager.dashboard.manager') }}">Dashboard Laporan</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('manager.production-batches.index') }}">Validasi Produksi</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('manager.quality-control-results.index') }}">Validasi QC</a></li>
                         @elseif(Auth::user()->position === 'Admin')
-                            <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}">Manajemen User</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('users.index') }}">User</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ route('suppliers.index') }}">Supplier</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('raw-material-batches.index') }}">Bahan Baku</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('raw-material-stocks.index') }}">Stok Bahan Baku</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ route('warehouses.index') }}">Gudang</a></li>
-                            <li class="nav-item"><a class="nav-link" href="/admin/dashboard">Dashboard Admin</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('dashboard.admin') }}">Dashboard</a></li>
                         @endif
-                        <li class="nav-item"><a class="nav-link" href="{{ route('logout') }}">Logout</a></li>
+                        <form action="{{ route('logout') }}" method="POST" class="nav-item">
+                            @csrf
+                            <button class="nav-link btn btn-link" type="submit">
+                                Logout
+                            </button>
+                        </form>
                     @endauth
                 </ul>
             </div>

@@ -47,4 +47,13 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // public function routePrefix()
+    // {
+    //     return match ($this->position) {
+    //         'Admin' => '',
+    //         'Manager' => 'manager.',
+    //         default => 'staff.',
+    //     };
+    // }
 }

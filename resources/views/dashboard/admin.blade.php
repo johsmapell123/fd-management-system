@@ -9,10 +9,13 @@
     <ul>
         <li><a href="{{ route('users.index') }}">Kelola Users</a></li>
         <li><a href="{{ route('suppliers.index') }}">Kelola Suppliers</a></li>
-        <li><a href="#">Laporan Produksi</a>
+        <li><a href="{{ route('raw-material-batches.index') }}">Kelola Bahan Baku (Batch)</a></li>
+        <li><a href="{{ route('raw-material-stocks.index') }}">Kelola Stok Bahan Baku</a></li>
+        <li><a href="{{ route('warehouses.index') }}">Kelola Gudang</a></li>
+        {{-- <li><a href="#">Laporan Produksi</a>
         <span>(undermaintained)</span></li>
         <li><a href="#">Laporan Gudang</a>
-        <span>(undermaintained)</span></li>
+        <span>(undermaintained)</span></li> --}}
     </ul>
 
     <form method="POST" action="{{ route('logout') }}">

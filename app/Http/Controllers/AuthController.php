@@ -30,15 +30,6 @@ class AuthController extends Controller
             Log::info('Login success', ['id' => Auth::id(), 'position' => Auth::user()->position]);
 
             return $this->redirectByRole(Auth::user()->position)->with('success', 'Logged in successfully!');
-
-            // $user = Auth::user();
-            // if ($user->position === 'Admin') {
-            //     return redirect('/admin/dashboard');
-            // } elseif ($user->position === 'Manager') {
-            //     return redirect('/manager/dashboard');
-            // } else {
-            //     return redirect('/staff/dashboard');
-            // }
         }
 
         return back()->withErrors([
@@ -50,7 +41,7 @@ class AuthController extends Controller
     {
         return match ($position) {
             'Admin' => redirect()->route('dashboard.admin'),
-            'Manager' => redirect()->route('dashboard.manager'),
+            'Manager' => redirect()->route('manager.dashboard.manager'),
             'Staff' => redirect()->route('dashboard.staff'),
             default => abort(403),
         };

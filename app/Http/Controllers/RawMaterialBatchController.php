@@ -3,22 +3,30 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use App\Models\RawMaterialBatch;
 use App\Models\Supplier;
-use Illuminate\Support\Str;
+use App\Models\Warehouse;
 
 class RawMaterialBatchController extends Controller
 {
     public function index()
     {
         $batches = RawMaterialBatch::with('supplier', 'rawMaterialStock')->get();
-        return view('raw-material-batches.index', compact('batches'));
+        return view('warehouse.raw_materials.index', compact('batches'));
+    }
+
+    public function show($id)
+    {
+        $batch = RawMaterialBatch::with('supplier', 'rawMaterialStock.warehouse')->findOrFail($id);
+        return view('warehouse.raw_materials.show', compact('batch'));
     }
 
     public function create()
     {
         $suppliers = Supplier::all();
-        return view('raw-material-batches.create', compact('suppliers'));
+        $warehouses = Warehouse::all();
+        return view('warehouse.raw_materials.create', compact('suppliers', 'warehouses'));
     }
 
     public function store(Request $request)
@@ -43,5 +51,13 @@ class RawMaterialBatchController extends Controller
             'unit' => $validated['unit'],
         ]);
         return redirect()->route('raw-material-batches.index')->with('success', 'Batch created.');
+    }
+
+    public function edit($id)
+    {
+        $batch = RawMaterialBatch::findOrFail($id);
+        $suppliers = Supplier::all();
+        $warehouses = Warehouse::all();
+        return view('warehouse.raw_materials.edit', compact('batch', 'suppliers', 'warehouses'));
     }
 }

@@ -7,7 +7,7 @@ if (! function_exists('dashboard_route')) {
       case 'Admin':
         return route('dashboard.admin');
       case 'Manager':
-        return route('dashboard.manager');
+        return route('manager.dashboard.manager');
       case 'Staff':
         return route('dashboard.staff');
       default:

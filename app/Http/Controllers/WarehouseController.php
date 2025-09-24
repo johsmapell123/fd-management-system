@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Warehouse;
+use App\Models\RawMaterialBatch;
+use App\Models\RawMaterialStock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -11,7 +13,7 @@ class WarehouseController extends Controller
   public function index()
   {
     $warehouses = Warehouse::with('rawMaterialStock', 'finishedGoodsStock')->get();
-    return view('warehouses.index', compact('warehouses'));
+    return view('warehouse.index', compact('warehouses'));
   }
 
   public function create()
@@ -19,7 +21,11 @@ class WarehouseController extends Controller
     if (Auth::user()->position !== 'Admin') {
       return redirect()->back()->with('error', 'Access denied.');
     }
-    return view('warehouses.create');
+
+    $batches = RawMaterialBatch::all();
+    $stocks = RawMaterialStock::all();
+
+    return view('warehouse.create', compact('batches', 'stocks'));
   }
 
   public function store(Request $request)
@@ -39,7 +45,7 @@ class WarehouseController extends Controller
   public function show(Warehouse $warehouse)
   {
     $warehouse->load('rawMaterialStock', 'finishedGoodsStock');
-    return view('warehouses.show', compact('warehouse'));
+    return view('warehouse.show', compact('warehouse'));
   }
 
   public function edit(Warehouse $warehouse)
@@ -47,7 +53,11 @@ class WarehouseController extends Controller
     if (Auth::user()->position !== 'Admin') {
       return redirect()->back()->with('error', 'Access denied.');
     }
-    return view('warehouses.edit', compact('warehouse'));
+    
+    $batches = RawMaterialBatch::all();
+    $stocks = RawMaterialStock::all();
+
+    return view('warehouse.edit', compact('warehouse', 'batches', 'stocks'));
   }
 
   public function update(Request $request, Warehouse $warehouse)

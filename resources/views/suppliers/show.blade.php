@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'Detail User')
+@section('title', 'Detail supplier')
 
 @section('content')
-<h1>Detail User: {{ $user->name }}</h1>
+<h1>Detail supplier: {{ $supplier->name }}</h1>
 <div class="card">
   <div class="card-body">
-    <p><strong>Email:</strong> {{ $user->email }}</p>
-    <p><strong>Departemen:</strong> {{ $user->department }}</p>
-    <p><strong>Posisi:</strong> {{ $user->position }}</p>
-    <p><strong>Dibuat:</strong> {{ $user->created_at }}</p>
+    <p><strong>Contact Person:</strong> {{ $supplier->contact_person }}</p>
+    <p><strong>Departemen:</strong> {{ $supplier->phone }}</p>
+    <p><strong>Posisi:</strong> {{ $supplier->email }}</p>
+    <p><strong>Dibuat:</strong> {{ $supplier->address }}</p>
   </div>
 </div>
 <a href="{{ route('suppliers.index') }}" class="btn btn-secondary mt-3">Kembali</a>

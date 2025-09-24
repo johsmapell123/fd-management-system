@@ -12,8 +12,8 @@ class SupplierController extends Controller
 {
     // List semua supplier
     public function index()
-    {
-        $suppliers = Supplier::with('contracts')->get();
+    { 
+        $suppliers = Supplier::with('contracts')->latest()->get();
         return view('suppliers.index', compact('suppliers'));
     }
 

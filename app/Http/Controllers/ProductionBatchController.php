@@ -16,14 +16,14 @@ class ProductionBatchController extends Controller
     public function index()
     {
         $batches = ProductionBatch::with('productionMaterials', 'finishedGoodsStock', 'qualityControlResults')->get();
-        return view('production-batches.index', compact('batches'));
+        return view('production_batches.index', compact('batches'));
     }
 
     public function create()
     {
         // Ambil hanya bahan baku yg statusnya "In Use"
         $rawBatches = RawMaterialBatch::where('status', 'In Use')->get();
-        return view('production-batches.create', compact('rawBatches'));
+        return view('production_batches.create', compact('rawBatches'));
     }
 
     public function store(Request $request)
@@ -59,7 +59,7 @@ class ProductionBatchController extends Controller
     public function show(ProductionBatch $productionBatch)
     {
         $productionBatch->load('productionMaterials', 'finishedGoodsStock', 'qualityControlResults');
-        return view('production-batches.show', compact('productionBatch'));
+        return view('production_batches.show', compact('productionBatch'));
     }
 
     public function edit(ProductionBatch $productionBatch)
@@ -67,7 +67,7 @@ class ProductionBatchController extends Controller
         if (Auth::user()->position !== 'Manager' && Auth::user()->position !== 'Admin') {
             return redirect()->back()->with('error', 'Access denied.');
         }
-        return view('production-batches.edit', compact('productionBatch'));
+        return view('production_batches.edit', compact('productionBatch'));
     }
 
     public function update(Request $request, ProductionBatch $productionBatch)

@@ -46,7 +46,7 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        if (Auth::user()->position !== 'Admin' && Auth::user()->user_id !== $user->user_id) {
+        if (Auth::user()->position !== 'Admin' && Auth::user()->id !== $user->id) {
             return redirect()->back()->with('error', 'Access denied.');
         }
         return view('users.show', compact('user'));
@@ -57,6 +57,7 @@ class UserController extends Controller
         if (Auth::user()->position !== 'Admin') {
             return redirect()->back()->with('error', 'Access denied.');
         }
+        $user = User::findOrFail($id);
         return view('users.edit', compact('user'));
     }
 
